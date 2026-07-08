@@ -25,89 +25,254 @@ para que eu possa coletar e analisar os dados de vendas, ajudando a identificar
 padrões de consumo e otimizar as estrategias de marketing e estoque.)
 #
 '''
-p1_nome = p2_nome = p3_nome = ""
-p1_estoque = p2_estoque = p3_estoque = 0
-p1_preco = p2_preco = p3_preco = 0.0
-p1_validade = p2_validade = p3_validade = ""
-p1_descricao = p2_descricao = p3_descricao = ""
+import tkinter as tk
+from tkinter import messagebox, ttk
 
-print("\n== Hamburgeria ===")
+# --- PALETA DE CORES PERSONALIZADA (DA IMAGEM) ---
+COR_AZUL_ESCURO = "#004d6e"   # AE
+COR_AZUL_MEDIO  = "#0081ab"   # AM
+COR_AZUL_CLARO  = "#00b1cd"   # AC
+COR_VERDE       = "#a6c844"   # V
+COR_ROXO_VINHO  = "#b83764"   # R
+COR_AMARELO     = "#edce01"   # A
+COR_MARROM_DARK = "#4a3336"   # B
 
-print("1. Cardapio ")
-print("2. Bebidas ")
-print("3. Sobremesas ")
-print("4. Combos ")
-print("5. Pedidos ")
-print("6. Fazer Pedidos ")
-print("7. Combo Infantil ")
-print("8. Forma de Pagamento ")
-print("9. Combo do Dia ")
-print("0. Sair")
-print('-' * 50 + "\n")
+# --- CONFIGURAÇÃO DE DADOS MOCKADOS ---
+produtos_cadastrados = []
 
-while True:
-    opcao = input("Digite a opção desejada: ")
+cardapio_lanches = ["Hambúrguer de carne", "Hambúrguer de frango", "Hambúrguer vegetariano", "Hambúrguer vegano", "Batata frita", "Onion rings", "Salada"]
+cardapio_bebidas = ["Refrigerante", "Suco natural", "Água mineral", "Cerveja"]
+cardapio_sobremesas = ["Milkshake", "Sorvete", "Brownie", "Pudim"]
+cardapio_combos = {
+    "1": "Hambúrguer + Batata frita + Refrigerante",
+    "2": "Hambúrguer + Onion rings + Suco natural",
+    "3": "Hambúrguer + Salada + Água mineral"
+}
+combos_infantis = {
+    "1": "Hambúrguer de carne + Batata frita + Refrigerante",
+    "2": "Hambúrguer de frango + Onion rings + Suco natural",
+    "3": "Hambúrguer vegetariano + Salada + Água mineral"
+}
+formas_pagamento = ["Dinheiro", "Cartão de Crédito", "Cartão de Débito", "Pix"]
 
-    if opcao == '1':
-        print('Cadastrando produtos...\n')
+# --- FUNÇÕES DE INTERAÇÃO DA INTERFACE ---
 
-        if p1_nome == "":
-            p1_nome = input("Digite o nome do produto: ")
-            p1_estoque = int(input("Digite a quantidade em estoque: "))
-            p1_preco = float(input("Digite o preço do produto: "))
-            p1_validade = input("Digite a validade do produto: ")
-            p1_descricao = input("Digite a descrição do produto: ")
-
-            print(f"✅ Produto '{p1_nome}' cadastrado na vaga 1!")
-
-        elif p2_nome == "":
-            p2_nome = input("Digite o nome do produto: ")
-            p2_estoque = int(input("Digite a quantidade em estoque: "))
-            p2_preco = float(input("Digite o preço do produto: "))
-            p2_validade = input("Digite a validade do produto: ")
-            p2_descricao = input("Digite a descrição do produto: ")
-
-            print(f"✅ Produto '{p2_nome}' cadastrado na vaga 2!")
-
-        elif p3_nome == "":
-            p3_nome = input("Digite o nome do produto: ")
-            p3_estoque = int(input("Digite a quantidade em estoque: "))
-            p3_preco = float(input("Digite o preço do produto: "))
-            p3_validade = input("Digite a validade do produto: ")
-            p3_descricao = input("Digite a descrição do produto: ")
-
-            print(f"✅ Produto '{p3_nome}' cadastrado na vaga 3!")
-
-        else:
-            print("❌ Sistema cheio! Limite de 3 produtos atingido.")
-
-    elif opcao == '2':
-        print('Listando produtos...')
-
-        if p1_nome == "" and p2_nome == "" and p3_nome == "":
-            print('Nenhum produto cadastrado no sistema ainda.')
-
-        else:
-            if p1_nome != "":
-                print(f"Nome: {p1_nome} | Preço: R$ {p1_preco:.2f} | Estoque: {p1_estoque} unid.")
-                print(f"Validade: {p1_validade} | Descrição: {p1_descricao}")
-                print('🔥' * 30)
-
-            if p2_nome != "":
-                print(f"Nome: {p2_nome} | Preço: R$ {p2_preco:.2f} | Estoque: {p2_estoque} unid.")
-                print(f"Validade: {p2_validade} | Descrição: {p2_descricao}")
-                print('-' * 30)
-
-            if p3_nome != "":
-                print(f"Nome: {p3_nome} | Preço: R$ {p3_preco:.2f} | Estoque: {p3_estoque} unid.")
-                print(f"Validade: {p3_validade} | Descrição: {p3_descricao}")
-                print('-' * 30)
-
-    elif opcao == '0':
-        print("Saindo do sistema...")
-        break
-
+def fazer_pedido_simples(item):
+    if item:
+        messagebox.showinfo("Pedido Realizado", f"✅ Pedido de '{item}' realizado com sucesso!")
     else:
-        print("Opção inválida. Escolha uma opção válida.")
+        messagebox.showwarning("Aviso", "Por favor, selecione um item.")
 
-    print('-' * 50 + "\n")
+def fazer_pedido_combo(tipo_combo):
+    if tipo_combo == "normal":
+        combo_id = combo_normal_var.get().split(" - ")[0] if combo_normal_var.get() else ""
+        combo_desc = cardapio_combos.get(combo_id)
+    else:
+        combo_id = combo_infantil_var.get().split(" - ")[0] if combo_infantil_var.get() else ""
+        combo_desc = combos_infantis.get(combo_id)
+        
+    pagam = pagamento_var.get()
+    
+    if not combo_id:
+        messagebox.showwarning("Aviso", "Por favor, escolha um Combo!")
+        return
+        
+    messagebox.showinfo("Pedido Confirmado", 
+                        f"🎉 Pedido realizado com sucesso!\n\n"
+                        f"🍔 item: Combo {combo_id}\n"
+                        f"📝 Descrição: {combo_desc}\n"
+                        f"💳 Pagamento: {pagam}")
+
+def pedir_combo_do_dia():
+    pagam = pagamento_var.get()
+    messagebox.showinfo("Combo do Dia", 
+                        f"🔥 Pedido do Combo do Dia realizado com sucesso!\n\n"
+                        f"🍔 Item: Combo 1 ({cardapio_combos['1']})\n"
+                        f"💳 Pagamento: {pagam}")
+
+def cadastrar_produto():
+    nome = entry_nome.get().strip()
+    try:
+        estoque = int(entry_estoque.get())
+        preco = float(entry_preco.get())
+    except ValueError:
+        messagebox.showerror("Erro", "Estoque deve ser número inteiro e Preço deve ser número decimal.")
+        return
+        
+    validade = entry_validade.get().strip()
+    desc = entry_desc.get().strip()
+    
+    if not nome or not validade:
+        messagebox.showwarning("Aviso", "Nome e Validade são obrigatórios!")
+        return
+        
+    novo_prod = {"nome": nome, "estoque": estoque, "preco": preco, "validade": validade, "descricao": desc}
+    produtos_cadastrados.append(novo_prod)
+    
+    # Atualiza a tabela visual de produtos
+    atualizar_tabela_produtos()
+    
+    # Limpa os campos
+    entry_nome.delete(0, tk.END)
+    entry_estoque.delete(0, tk.END)
+    entry_preco.delete(0, tk.END)
+    entry_validade.delete(0, tk.END)
+    entry_desc.delete(0, tk.END)
+    
+    messagebox.showinfo("Sucesso", f"✅ Produto '{nome}' cadastrado com sucesso!")
+
+def atualizar_tabela_produtos():
+    for row in tabela.get_children():
+        tabela.delete(row)
+    for i, prod in enumerate(produtos_cadastrados, 1):
+        tabela.insert("", tk.END, values=(i, prod['nome'], f"R$ {prod['preco']:.2f}", prod['estoque'], prod['validade']))
+
+
+# --- CONSTRUÇÃO DA JANELA PRINCIPAL ---
+root = tk.Tk()
+root.title("Sistema Hamburgueria Pro 2026")
+
+# 🔒 FORÇANDO A MEDIDA EXATA DE 780x650 SEM ERRO
+root.geometry("780x650")
+root.minsize(780, 650)
+root.maxsize(780, 650)
+root.configure(bg=COR_MARROM_DARK)
+
+# TÍTULO DE BOAS-VINDAS
+lbl_boas_vindas = tk.Label(
+    root, 
+    text="🍔 Bem-vindo à Hamburgueria 🍔", 
+    font=("Arial", 14, "bold"), 
+    bg=COR_MARROM_DARK, 
+    fg=COR_AMARELO
+)
+lbl_boas_vindas.pack(pady=5)
+
+# Customização de estilos TTK para abas e tabelas
+style = ttk.Style()
+style.theme_use('default')
+style.configure("TNotebook", background=COR_MARROM_DARK)
+style.configure("TNotebook.Tab", background=COR_AZUL_MEDIO, foreground="white", font=("Arial", 9, "bold"), padding=[8, 3])
+style.map("TNotebook.Tab", background=[("selected", COR_AZUL_ESCURO)], foreground=[("selected", "white")])
+
+style.configure("Treeview.Heading", background=COR_AZUL_ESCURO, foreground="white", font=("Arial", 9, "bold"))
+style.configure("Treeview", background="white", fieldbackground="white", rowheight=22)
+
+# Criando abas para organizar o menu
+notebook = ttk.Notebook(root)
+notebook.pack(fill="both", expand=True, padx=8, pady=8)
+
+# --- ABA 1: CARDÁPIO E PEDIDOS RÁPIDOS ---
+tab1 = tk.Frame(notebook, bg=COR_AZUL_ESCURO)
+notebook.add(tab1, text="🍔 Fazer Pedidos")
+
+# Lanches
+lbl_lanches = tk.Label(tab1, text="Lanches e Acompanhamentos:", bg=COR_AZUL_ESCURO, fg="white", font=("Arial", 9, "bold"))
+lbl_lanches.grid(row=0, column=0, padx=15, pady=3, sticky="w")
+combo_lanches = ttk.Combobox(tab1, values=cardapio_lanches, width=32, state="readonly")
+combo_lanches.grid(row=1, column=0, padx=15, pady=3)
+btn_pedir_lanche = tk.Button(tab1, text="Pedir Lanche", bg=COR_VERDE, fg=COR_MARROM_DARK, font=("Arial", 8, "bold"), width=12, command=lambda: fazer_pedido_simples(combo_lanches.get()))
+btn_pedir_lanche.grid(row=1, column=1, padx=5, pady=3)
+
+# Bebidas
+lbl_bebidas = tk.Label(tab1, text="Bebidas:", bg=COR_AZUL_ESCURO, fg="white", font=("Arial", 9, "bold"))
+lbl_bebidas.grid(row=2, column=0, padx=15, pady=3, sticky="w")
+combo_bebidas = ttk.Combobox(tab1, values=cardapio_bebidas, width=32, state="readonly")
+combo_bebidas.grid(row=3, column=0, padx=15, pady=3)
+btn_pedir_bebida = tk.Button(tab1, text="Pedir Bebida", bg=COR_VERDE, fg=COR_MARROM_DARK, font=("Arial", 8, "bold"), width=12, command=lambda: fazer_pedido_simples(combo_bebidas.get()))
+btn_pedir_bebida.grid(row=3, column=1, padx=5, pady=3)
+
+# Sobremesas
+lbl_sobremesas = tk.Label(tab1, text="Sobremesas:", bg=COR_AZUL_ESCURO, fg="white", font=("Arial", 9, "bold"))
+lbl_sobremesas.grid(row=4, column=0, padx=15, pady=3, sticky="w")
+combo_sobremesas = ttk.Combobox(tab1, values=cardapio_sobremesas, width=32, state="readonly")
+combo_sobremesas.grid(row=5, column=0, padx=15, pady=3)
+btn_pedir_sobremesa = tk.Button(tab1, text="Pedir Sobremesa", bg=COR_VERDE, fg=COR_MARROM_DARK, font=("Arial", 8, "bold"), width=12, command=lambda: fazer_pedido_simples(combo_sobremesas.get()))
+btn_pedir_sobremesa.grid(row=5, column=1, padx=5, pady=3)
+
+# Linha Separadora Customizada
+canvas_sep = tk.Canvas(tab1, height=1, bg=COR_AZUL_CLARO, bd=0, highlightthickness=0)
+canvas_sep.grid(row=6, column=0, columnspan=3, sticky="ew", pady=10, padx=15)
+
+# Formas de Pagamento Global
+lbl_pagam = tk.Label(tab1, text="Forma de Pagamento para os Combos:", bg=COR_AZUL_ESCURO, fg="white", font=("Arial", 9, "bold"))
+lbl_pagam.grid(row=7, column=0, padx=15, pady=3, sticky="w")
+pagamento_var = tk.StringVar(value=formas_pagamento[0])
+combo_pagam = ttk.Combobox(tab1, textvariable=pagamento_var, values=formas_pagamento, width=32, state="readonly")
+combo_pagam.grid(row=8, column=0, padx=15, pady=3)
+
+# Combos Normais
+lbl_c_normal = tk.Label(tab1, text="Selecione um Combo:", bg=COR_AZUL_ESCURO, fg="white", font=("Arial", 9, "bold"))
+lbl_c_normal.grid(row=9, column=0, padx=15, pady=3, sticky="w")
+combo_normal_var = tk.StringVar()
+combo_c_normal = ttk.Combobox(tab1, textvariable=combo_normal_var, values=[f"{k} - {v}" for k, v in cardapio_combos.items()], width=44, state="readonly")
+combo_c_normal.grid(row=10, column=0, padx=15, pady=3)
+btn_pedir_c_normal = tk.Button(tab1, text="Pedir Combo", bg=COR_AMARELO, fg=COR_MARROM_DARK, font=("Arial", 8, "bold"), width=12, command=lambda: fazer_pedido_combo("normal"))
+btn_pedir_c_normal.grid(row=10, column=1, padx=5, pady=3)
+
+# Combos Infantis
+lbl_c_infantil = tk.Label(tab1, text="Selecione um Combo Infantil:", bg=COR_AZUL_ESCURO, fg="white", font=("Arial", 9, "bold"))
+lbl_c_infantil.grid(row=11, column=0, padx=15, pady=3, sticky="w")
+combo_infantil_var = tk.StringVar()
+combo_c_infantil = ttk.Combobox(tab1, textvariable=combo_infantil_var, values=[f"{k} - {v}" for k, v in combos_infantis.items()], width=44, state="readonly")
+combo_c_infantil.grid(row=12, column=0, padx=15, pady=3)
+btn_pedir_c_infantil = tk.Button(tab1, text="Pedir Combo Infantil", bg=COR_AZUL_CLARO, fg=COR_MARROM_DARK, font=("Arial", 8, "bold"), width=12, command=lambda: fazer_pedido_combo("infantil"))
+btn_pedir_c_infantil.grid(row=12, column=1, padx=5, pady=3)
+
+# Botão Especial: Combo do Dia
+btn_combo_dia = tk.Button(tab1, text="🔥 PEDIR COMBO DO DIA!", bg=COR_ROXO_VINHO, fg="white", font=("Arial", 10, "bold"), command=pedir_combo_do_dia)
+btn_combo_dia.grid(row=13, column=0, columnspan=2, padx=15, pady=12, sticky="ew")
+
+
+# --- ABA 2: CADASTRO E LISTAGEM DE PRODUTOS ---
+tab2 = tk.Frame(notebook, bg=COR_AZUL_MEDIO)
+notebook.add(tab2, text="📦 Gerenciar Estoque/Produtos")
+
+# Formulário de Entrada
+frame_form = tk.LabelFrame(tab2, text=" Cadastrar Novo Produto ", bg=COR_AZUL_MEDIO, fg="white", font=("Arial", 9, "bold"), padx=8, pady=5)
+frame_form.pack(fill="x", padx=8, pady=5)
+
+tk.Label(frame_form, text="Nome:", bg=COR_AZUL_MEDIO, fg="white").grid(row=0, column=0, padx=5, pady=3, sticky="e")
+entry_nome = tk.Entry(frame_form, width=22)
+entry_nome.grid(row=0, column=1, padx=5, pady=3)
+
+tk.Label(frame_form, text="Estoque:", bg=COR_AZUL_MEDIO, fg="white").grid(row=0, column=2, padx=5, pady=3, sticky="e")
+entry_estoque = tk.Entry(frame_form, width=10)
+entry_estoque.grid(row=0, column=3, padx=5, pady=3)
+
+tk.Label(frame_form, text="Preço: R$", bg=COR_AZUL_MEDIO, fg="white").grid(row=1, column=0, padx=5, pady=3, sticky="e")
+entry_preco = tk.Entry(frame_form, width=22)
+entry_preco.grid(row=1, column=1, padx=5, pady=3)
+
+tk.Label(frame_form, text="Validade:", bg=COR_AZUL_MEDIO, fg="white").grid(row=1, column=2, padx=5, pady=3, sticky="e")
+entry_validade = tk.Entry(frame_form, width=15)
+entry_validade.grid(row=1, column=3, padx=5, pady=3)
+
+tk.Label(frame_form, text="Descrição:", bg=COR_AZUL_MEDIO, fg="white").grid(row=2, column=0, padx=5, pady=3, sticky="e")
+entry_desc = tk.Entry(frame_form, width=48)
+entry_desc.grid(row=2, column=1, columnspan=3, padx=5, pady=3)
+
+btn_salvar_produto = tk.Button(frame_form, text="Salvar Produto no Sistema", bg=COR_VERDE, fg=COR_MARROM_DARK, font=("Arial", 9, "bold"), command=cadastrar_produto)
+btn_salvar_produto.grid(row=3, column=0, columnspan=4, pady=5)
+
+# Tabela de Visualização (Treeview)
+frame_tabela = tk.LabelFrame(tab2, text=" Produtos Cadastrados ", bg=COR_AZUL_MEDIO, fg="white", font=("Arial", 9, "bold"), padx=5, pady=5)
+frame_tabela.pack(fill="both", expand=True, padx=8, pady=5)
+
+colunas = ("id", "nome", "preco", "estoque", "validade")
+tabela = ttk.Treeview(frame_tabela, columns=colunas, show="headings", height=8)
+tabela.heading("id", text="Vaga")
+tabela.heading("nome", text="Nome")
+tabela.heading("preco", text="Preço")
+tabela.heading("estoque", text="Em Estoque")
+tabela.heading("validade", text="Validade")
+
+tabela.column("id", width=50, anchor="center")
+tabela.column("nome", width=180)
+tabela.column("preco", width=100, anchor="center")
+tabela.column("estoque", width=100, anchor="center")
+tabela.column("validade", width=110, anchor="center")
+
+tabela.pack(fill="both", expand=True, padx=5, pady=3)
+
+root.mainloop()
