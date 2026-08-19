@@ -1,11 +1,10 @@
-from datetime import datetime
+print("=== MENSAGEM PERSONALIZADA ===")
 
-# Solicita o nome do usuário
-nome = input("Por favor, digite o seu nome: ")
+nome = input("Digite seu nome: ")
+idade = input("Digite sua idade: ")
+cidade = input("Digite sua cidade: ")
 
-# Obtém e formata a hora atual
-agora = datetime.now()
-hora_formatada = agora.strftime("%H:%M:%S")
-
-# Exibe a mensagem
-print(f"Olá, {nome}! Seja bem-vindo(a). Agora são {hora_formatada}.")
+print("\nOlá,", nome + "!")
+print("Você tem", idade, "anos.")
+print("Você mora em", cidade + ".")
+print("Seja bem-vindo ao nosso programa!")
